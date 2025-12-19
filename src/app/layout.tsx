@@ -1,7 +1,9 @@
 import "./globals.css";
+import { LucideKanban } from "lucide-react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { homePath, ticketsPath } from "./path";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,14 +21,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="flex items-center justify-between py-2.5 px-5 border-b bg-background/60 w-full fixed left-0 top-0 right-0 z-20 backdrop-blur-xs bottom">
+        <nav className="flex items-center justify-between py-2.5 px-5 border-b bg-background/60 w-full fixed left-0 top-0 right-0 z-20 backdrop-blur-xs ">
           <div>
-            <Link href={homePath()} className="text-xl font-bold">
-              Home
+            <Link
+              href={homePath()}
+              className={buttonVariants({ variant: "ghost" })}
+            >
+              <LucideKanban />
+              <h1 className="font-semibold text-lg ml-1">TicketBounty</h1>
             </Link>
           </div>
           <div>
-            <Link href={ticketsPath()} className="text-sm underline">
+            <Link
+              href={ticketsPath()}
+              className={buttonVariants({ variant: "default" })}
+            >
               Tickets
             </Link>
           </div>
