@@ -1,10 +1,8 @@
 import "./globals.css";
-import { LucideKanban } from "lucide-react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { homePath, ticketsPath } from "./path";
+import Header from "@/components/Header";
+import ThemeProvider from "@/components/theme/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,30 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning lang="en">
       <body className={inter.className}>
-        <nav className="flex items-center justify-between py-2.5 px-5 border-b bg-background/60 w-full fixed left-0 top-0 right-0 z-20 backdrop-blur-xs ">
-          <div>
-            <Link
-              href={homePath()}
-              className={buttonVariants({ variant: "ghost" })}
-            >
-              <LucideKanban />
-              <h1 className="font-semibold text-lg ml-1">TicketBounty</h1>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={ticketsPath()}
-              className={buttonVariants({ variant: "default" })}
-            >
-              Tickets
-            </Link>
-          </div>
-        </nav>
-        <main className="px-8 py-24 overflow-y-auto overflow-x-hidden min-h-screen flex-1 flex flex-col bg-secondary/20">
-          {children}
-        </main>
+        <ThemeProvider>
+          <Header />
+          <main className="px-8 py-24 overflow-y-auto overflow-x-hidden min-h-screen flex-1 flex flex-col bg-secondary/20">
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );
