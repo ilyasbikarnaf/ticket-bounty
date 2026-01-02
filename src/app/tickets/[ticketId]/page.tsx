@@ -1,9 +1,4 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { ticketsPath } from "@/app/path";
-import Placeholder from "@/components/Placeholder";
-import { Button } from "@/components/ui/button";
 import TicketItem from "@/features/ticket/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 

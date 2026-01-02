@@ -1,11 +1,16 @@
 import clsx from "clsx";
-import { LucideSquareArrowOutUpRight } from "lucide-react";
+import {
+  LucidePencil,
+  LucideSquareArrowOutUpRight,
+  LucideTrash,
+} from "lucide-react";
 import Link from "next/link";
-import { ticketPath } from "@/app/path";
+import { ticketEditPath, ticketPath } from "@/app/path";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Ticket } from "@/generated/prisma/client";
+import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICON } from "../constants";
-import { Ticket } from "../types";
 
 type TicketItemProps = {
   ticket: Ticket;
@@ -15,10 +20,26 @@ type TicketItemProps = {
 export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
   const detailButton = (
     <Button asChild variant="outline" size="icon">
-      <Link href={ticketPath(ticket.id)}>
+      <Link prefetch href={ticketPath(ticket.id)}>
         <LucideSquareArrowOutUpRight className="w-4 h-4" />
       </Link>
     </Button>
+  );
+
+  const editButton = (
+    <Button asChild variant="outline" size="icon">
+      <Link prefetch href={ticketEditPath(ticket.id)}>
+        <LucidePencil className="w-4 h-4" />
+      </Link>
+    </Button>
+  );
+
+  const deleteButton = (
+    <form action={deleteTicket.bind(null, ticket.id)}>
+      <Button variant="outline" size="icon">
+        <LucideTrash className="h-4 w-4" />
+      </Button>
+    </form>
   );
 
   return (
@@ -30,9 +51,11 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
     >
       <Card className="w-full gap-2">
         <CardHeader>
-          <CardTitle className="flex items-center gap-x-2">
+          <CardTitle className="flex items-center gap-x-2 ">
             <span>{TICKETS_ICON[ticket.status]}</span>
-            <h3 className="text-2xl">{ticket.title}</h3>
+            <h3 className={clsx("text-2xl", !isDetail && "line-clamp-1")}>
+              {ticket.title}
+            </h3>
           </CardTitle>
         </CardHeader>
 
@@ -48,9 +71,19 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
         </CardContent>
       </Card>
 
-      {isDetail ? null : (
-        <div className="flex flex-col gap-y-1">{detailButton}</div>
-      )}
+      <div className="flex flex-col gap-y-1">
+        {isDetail ? (
+          <>
+            {editButton}
+            {deleteButton}
+          </>
+        ) : (
+          <>
+            {detailButton}
+            {editButton}
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function NotFound() {
   return (
     <Placeholder
-      placeholder="Ticket not found"
+      placeholder="We could not find your ticket"
       button={
         <Button variant={"outline"} asChild>
           <Link href={ticketsPath()}>Go Back To Tickets</Link>
