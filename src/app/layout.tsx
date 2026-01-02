@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import ThemeProvider from "@/components/theme/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,8 @@ export default function RootLayout({
           <main className="px-8 py-24 overflow-y-auto overflow-x-hidden min-h-screen flex-1 flex flex-col bg-secondary/20">
             {children}
           </main>
+
+          <Toaster expand />
         </ThemeProvider>
       </body>
     </html>
