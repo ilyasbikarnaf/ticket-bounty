@@ -1,16 +1,27 @@
 import clsx from "clsx";
 import {
+  LucideMoreVertical,
   LucidePencil,
   LucideSquareArrowOutUpRight,
   LucideTrash,
 } from "lucide-react";
 import Link from "next/link";
 import { ticketEditPath, ticketPath } from "@/app/path";
+import ConfirmDialog from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Ticket } from "@/generated/prisma/client";
+import { toCurrencyFromCent } from "@/utils/currency";
+import { formatDeadline } from "@/utils/deadline";
 import { deleteTicket } from "../actions/delete-ticket";
 import { TICKETS_ICON } from "../constants";
+import TicketMoreMenu from "./ticket-more-menu";
 
 type TicketItemProps = {
   ticket: Ticket;
@@ -34,19 +45,41 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
     </Button>
   );
 
+  // const deleteButton = (
+  //   <form action={deleteTicket.bind(null, ticket.id)}>
+  //     <Button variant="outline" size="icon">
+  //       <LucideTrash className="h-4 w-4" />
+  //     </Button>
+  //   </form>
+  // );
+
   const deleteButton = (
-    <form action={deleteTicket.bind(null, ticket.id)}>
-      <Button variant="outline" size="icon">
-        <LucideTrash className="h-4 w-4" />
-      </Button>
-    </form>
+    <ConfirmDialog
+      trigger={
+        <Button variant="outline" size="icon">
+          <LucideTrash className="h-4 w-4" />
+        </Button>
+      }
+      action={deleteTicket.bind(null, ticket.id)}
+    />
+  );
+
+  const moreMenu = (
+    <TicketMoreMenu
+      ticket={ticket}
+      trigger={
+        <Button variant="outline" size="icon">
+          <LucideMoreVertical />
+        </Button>
+      }
+    />
   );
 
   return (
     <div
       className={clsx(
         "flex gap-x-1 w-full",
-        isDetail ? "max-w-[580px]" : "max-w-[420px]"
+        isDetail ? "max-w-[580px]" : "max-w-[420px]",
       )}
     >
       <Card className="w-full gap-2">
@@ -58,17 +91,24 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
             </h3>
           </CardTitle>
         </CardHeader>
-
-        <CardContent>
+        <CardContent className="mb-3">
           <p
             className={clsx(
               "whitespace-break-spaces",
-              !isDetail && "line-clamp-3"
+              !isDetail && "line-clamp-3",
             )}
           >
             {ticket.content}
           </p>
         </CardContent>
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">
+            {formatDeadline(ticket.deadline)}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {toCurrencyFromCent(ticket.bounty)}$
+          </p>
+        </CardFooter>
       </Card>
 
       <div className="flex flex-col gap-y-1">
@@ -76,6 +116,7 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
           <>
             {editButton}
             {deleteButton}
+            {moreMenu}
           </>
         ) : (
           <>

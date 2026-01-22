@@ -1,16 +1,17 @@
 "use client";
 
 import { Label } from "@radix-ui/react-label";
-import { useActionState, useEffect } from "react";
-import { toast } from "sonner";
+import { useActionState, useRef } from "react";
+import DatePicker from "@/components/date-picker";
 import FieldError from "@/components/form/field-error";
-import useActionFeedback from "@/components/form/hooks/use-action-feedback";
+import Form from "@/components/form/form";
 import SubmitButton from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Ticket } from "@/generated/prisma/client";
+import { fromCent } from "@/utils/currency";
+import { formatDeadline } from "@/utils/deadline";
 import { upsertTicket } from "../actions/upsert-ticket";
 
 type TicketUpsertFormProps = {
@@ -20,24 +21,21 @@ type TicketUpsertFormProps = {
 export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
   const [actionState, formAction] = useActionState(
     upsertTicket.bind(null, ticket?.id),
-    EMPTY_ACTION_STATE
+    EMPTY_ACTION_STATE,
   );
 
-  useActionFeedback(actionState, {
-    onSuccess: ({ actionState }) => {
-      if (actionState.message) {
-        toast.success(actionState.message);
-      }
-    },
-    onError: ({ actionState }) => {
-      if (actionState.message) {
-        toast.error(actionState.message);
-      }
-    },
-  });
+  const datePickerImperativeHandle = useRef<{ reset: () => void }>(null);
+
+  const handleSuccess = () => {
+    datePickerImperativeHandle.current?.reset();
+  };
 
   return (
-    <form action={formAction} className="flex flex-col gap-y-3">
+    <Form
+      actionState={actionState}
+      formAction={formAction}
+      onSuccess={handleSuccess}
+    >
       <Label htmlFor="title">Title</Label>
       <Input
         id="title"
@@ -59,7 +57,38 @@ export default function TicketUpsertForm({ ticket }: TicketUpsertFormProps) {
       />
       <FieldError actionState={actionState} name="content" />
 
+      <div className="flex gap-x-2">
+        <div className="w-1/2">
+          <Label htmlFor="deadline">Deadline</Label>
+
+          <DatePicker
+            id="deadline"
+            name="deadline"
+            defaultValue={formatDeadline(
+              (actionState.payload?.get("deadline") as string) ??
+                ticket?.deadline,
+            )}
+            imperativeHandlerRef={datePickerImperativeHandle}
+          />
+          <FieldError actionState={actionState} name="deadline" />
+        </div>
+
+        <div className="w-1/2">
+          <Label htmlFor="bounty">Bounty ($)</Label>
+          <Input
+            id="bounty"
+            name="bounty"
+            type="text"
+            defaultValue={
+              (actionState.payload?.get("bounty") as string) ??
+              (ticket?.bounty ? fromCent(ticket.bounty) : "")
+            }
+          />
+          <FieldError actionState={actionState} name="bounty" />
+        </div>
+      </div>
+
       <SubmitButton label={ticket ? "Update" : "Create"} />
-    </form>
+    </Form>
   );
 }
