@@ -12,7 +12,7 @@ type UseActionFeedbackOptions = {
 
 export default function useActionFeedback(
   actionState: ActionState,
-  options: UseActionFeedbackOptions
+  options: UseActionFeedbackOptions,
 ) {
   const prevTimestamp = useRef(0);
 
@@ -25,9 +25,7 @@ export default function useActionFeedback(
 
     if (actionState.status === "SUCCESS") {
       options.onSuccess?.({ actionState });
-    }
-
-    if (actionState.status === "ERROR") {
+    } else if (actionState.status === "ERROR") {
       options.onError?.({ actionState });
     }
   }, [actionState, options]);

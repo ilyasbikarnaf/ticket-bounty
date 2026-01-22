@@ -7,6 +7,7 @@ type ErrorFieldProps = {
 
 export default function FieldError({ actionState, name }: ErrorFieldProps) {
   const message = actionState.fieldErrors?.[name]?.[0];
+  console.log(actionState);
 
   if (!message) {
     return null;
