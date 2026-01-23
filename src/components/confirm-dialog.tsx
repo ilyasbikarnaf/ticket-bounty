@@ -1,5 +1,6 @@
 "use client";
 
+import { cloneElement, useActionState, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,27 +10,36 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ActionState } from "./form/utils/to-action-state";
-import { Button } from "./ui/button";
+import Form from "./form/form";
+import SubmitButton from "./form/submit-button";
+import { ActionState, EMPTY_ACTION_STATE } from "./form/utils/to-action-state";
 
-type ConfirmDialogProps = {
+type useConfirmDialogProps = {
   title?: string;
   description?: string;
-  trigger: React.ReactNode;
-  action: () => void;
+  trigger: React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+  action: () => Promise<ActionState>;
 };
 
-export default function ConfirmDialog({
+export default function useConfirmDialog({
   title = "Are you absolutely sure?",
   description = "This action cannot be undone. Make sure you undersetand the consequences .",
   trigger,
   action,
-}: ConfirmDialogProps) {
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+}: useConfirmDialogProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const deleteButton = cloneElement(trigger, {
+    onClick: () => setIsOpen((state) => !state),
+  });
+
+  const handleSuccess = () => setIsOpen(false);
+
+  const [actionState, formAction] = useActionState(action, EMPTY_ACTION_STATE);
+
+  const deleteDialog = (
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -38,12 +48,18 @@ export default function ConfirmDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <form action={action}>
-              <Button type="submit">Confirm</Button>
-            </form>
+            <Form
+              formAction={formAction}
+              actionState={actionState}
+              onSuccess={handleSuccess}
+            >
+              <SubmitButton label="Confirm" />
+            </Form>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
+
+  return [deleteButton, deleteDialog];
 }

@@ -2,6 +2,7 @@
 
 import { LucideTrash } from "lucide-react";
 import { toast } from "sonner";
+import useConfirmDialog from "@/components/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +27,14 @@ export default function TicketMoreMenu({
   ticket,
   trigger,
 }: TicketMoreMenuProps) {
-  const deleteButton = (
-    <DropdownMenuItem onClick={async () => await deleteTicket(ticket.id)}>
-      <LucideTrash className="w-4" /> Delete
-    </DropdownMenuItem>
-  );
+  const [deleteButton, deleteDialog] = useConfirmDialog({
+    action: deleteTicket.bind(null, ticket.id),
+    trigger: (
+      <DropdownMenuItem>
+        <LucideTrash className="h-4 w-4" /> Delete
+      </DropdownMenuItem>
+    ),
+  });
 
   const handleUpdateTicketStatus = async (value: string) => {
     if (ticket.status === value) {
@@ -66,14 +70,18 @@ export default function TicketMoreMenu({
   );
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
+    <>
+      {deleteDialog}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-56" align="start" side="right">
-        <DropdownMenuGroup>{ticketStatusRadioGroupItems}</DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        {deleteButton}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <DropdownMenuContent className="w-56" align="start" side="right">
+          <DropdownMenuGroup>{ticketStatusRadioGroupItems}</DropdownMenuGroup>
+          <DropdownMenuSeparator />
+
+          {deleteButton}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }
