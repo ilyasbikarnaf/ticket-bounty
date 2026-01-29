@@ -1,7 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import Header from "@/app/_navigation/Header";
+import Sidebar from "@/app/_navigation/sidebar/components/sidebar";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -22,9 +23,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider>
           <Header />
-          <main className="px-8 py-24 overflow-y-auto overflow-x-hidden min-h-screen flex-1 flex flex-col bg-secondary/20">
-            {children}
-          </main>
+          <div className="flex border-collapse overflow-hidden h-screen">
+            <Sidebar />
+            <main className="px-8 py-24 overflow-y-auto overflow-x-hidden min-h-screen flex-1 flex flex-col bg-secondary/20">
+              {children}
+            </main>
+          </div>
 
           <Toaster expand />
         </ThemeProvider>
