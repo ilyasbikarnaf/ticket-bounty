@@ -14,18 +14,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Ticket } from "@/generated/prisma/client";
+import { getAuth } from "@/features/auth/actions/get-auth";
+import { isOwner } from "@/features/auth/utils/is-owner";
+import { Prisma } from "@/generated/prisma/client";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { formatDeadline } from "@/utils/deadline";
 import { TICKETS_ICON } from "../constants";
 import TicketMoreMenu from "./ticket-more-menu";
 
 type TicketItemProps = {
-  ticket: Ticket;
+  // ticket: Ticket & { user: User };
+  ticket: Prisma.TicketGetPayload<{
+    include: {
+      user: {
+        select: {
+          username: true;
+          id: true;
+        };
+      };
+    };
+  }>;
   isDetail?: boolean;
 };
 
-export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
+export default async function TicketItem({
+  ticket,
+  isDetail,
+}: TicketItemProps) {
+  const { user } = await getAuth();
+  const isTicketOwner = isOwner(user, ticket);
+
   const detailButton = (
     <Button asChild variant="outline" size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -34,7 +52,7 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
     </Button>
   );
 
-  const editButton = (
+  const editButton = isTicketOwner && (
     <Button asChild variant="outline" size="icon">
       <Link prefetch href={ticketEditPath(ticket.id)}>
         <LucidePencil className="w-4 h-4" />
@@ -42,7 +60,7 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
     </Button>
   );
 
-  const moreMenu = (
+  const moreMenu = isTicketOwner && (
     <TicketMoreMenu
       ticket={ticket}
       trigger={
@@ -81,7 +99,7 @@ export default function TicketItem({ ticket, isDetail }: TicketItemProps) {
         </CardContent>
         <CardFooter className="flex justify-between">
           <p className="text-sm text-muted-foreground">
-            {formatDeadline(ticket.deadline)}
+            {formatDeadline(ticket.deadline)} by {ticket.user.username}
           </p>
           <p className="text-sm text-muted-foreground">
             {toCurrencyFromCent(ticket.bounty)}$

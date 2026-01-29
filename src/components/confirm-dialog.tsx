@@ -24,7 +24,7 @@ type useConfirmDialogProps = {
 
 export default function useConfirmDialog({
   title = "Are you absolutely sure?",
-  description = "This action cannot be undone. Make sure you undersetand the consequences .",
+  description = "This action cannot be undone. Make sure you undersetand the consequences.",
   trigger,
   action,
 }: useConfirmDialogProps) {

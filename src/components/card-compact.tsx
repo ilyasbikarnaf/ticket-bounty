@@ -24,14 +24,18 @@ export default function CardCompact({
 }: CardCompactProps) {
   return (
     <Card className={className}>
-      <CardHeader>
+      <CardHeader className="gap-1">
         <CardTitle className="text-2xl">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
       <CardContent>{content}</CardContent>
 
-      {footer && <CardFooter>{footer}</CardFooter>}
+      {footer && (
+        <CardFooter className="text-sm text-muted-foreground flex justify-between">
+          {footer}
+        </CardFooter>
+      )}
     </Card>
   );
 }
