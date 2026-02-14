@@ -1,12 +1,19 @@
-import Link from "next/link";
 import { Suspense } from "react";
 import Heading from "@/components/Heading";
 import Spinner from "@/components/spinner";
 import TicketList from "@/features/ticket/components/ticket-list";
-import { getTickets } from "@/features/ticket/queries/get-tickets";
-import { ticketsPath } from "./path";
+import {
+  ParsedSearchParams,
+  searchParamsCache,
+} from "@/features/ticket/search-params";
 
-export default async function HomePage() {
+type HomePageProps = {
+  searchParams: Promise<ParsedSearchParams>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const searchParamsAwaited = searchParamsCache.parse(await searchParams);
+
   return (
     <div className="flex-1 flex flex-col gap-y-8 ">
       <Heading
@@ -15,7 +22,7 @@ export default async function HomePage() {
       />
 
       <Suspense fallback={<Spinner />}>
-        <TicketList />
+        <TicketList searchParams={searchParamsAwaited} />
       </Suspense>
     </div>
   );
