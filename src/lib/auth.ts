@@ -1,7 +1,5 @@
 import { hash, verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { signinPath } from "@/app/path";
 import { getAuth } from "@/features/auth/actions/get-auth";
 import { lucia } from "@/lib/lucia";
 import prisma from "./prisma";

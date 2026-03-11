@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import z from "zod";
-import { deleteCookieByKey, setCookieByKey } from "@/actions/cookie";
 import { ticketsPath } from "@/app/path";
 import {
   ActionState,

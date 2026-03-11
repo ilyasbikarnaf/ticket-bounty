@@ -4,13 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { setCookieByKey } from "@/actions/cookie";
-import { signinPath, ticketPath, ticketsPath } from "@/app/path";
+import { ticketPath, ticketsPath } from "@/app/path";
 import {
   ActionState,
   fromErrorToActionState,
   ToActionState,
 } from "@/components/form/utils/to-action-state";
-import { getAuth } from "@/features/auth/actions/get-auth";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
 import prisma from "@/lib/prisma";

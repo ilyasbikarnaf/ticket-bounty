@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CardCompact from "@/components/card-compact";
 import SignInForm from "@/features/auth/components/sign-in-form";
-import { passwordForgotPath, signinPath, signupPath } from "../path";
+import { passwordForgotPath, signupPath } from "../path";
 
 export default function SignIn() {
   return (

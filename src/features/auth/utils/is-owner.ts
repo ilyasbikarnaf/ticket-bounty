@@ -1,5 +1,4 @@
 import { User as AuthUser } from "lucia";
-import { Ticket } from "@/generated/prisma/client";
 
 type Entity = {
   userId: string | null;
